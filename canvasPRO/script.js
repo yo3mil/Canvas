@@ -1,31 +1,25 @@
-var canvas =document.querySelector(`canvas`);
+var canvas = document.querySelector(`canvas`);
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 var c = canvas.getContext(`2d`);
 
-// ////////////////////////
-// // arc // CIRCLES
-// /*
-// c.beginPath();
-// c.arc(300, 300, 30, 0, Math.PI * 2, false);
-// c.stroke();
-// */
-// for (var i = 0; i < 50; i++) {
-//     var x = Math.random() * window.innerWidth;
-//     var y = Math.random() * window.innerHeight;
+// event listener for hover
+var button = $('#button');
+var isHovered = undefined;
+button.hover(
+    function() {
+        // when it is hovered
+         return isHovered = true;
+        
+    }, function() {
+        // when its not
+        return isHovered = false;
+    }
+);
 
-//     c.strokeStyle = getRandomColor();
-//     c.beginPath();
-//     c.arc(x, y, 30, 0, Math.PI * 2, false);
-//     c.stroke();
-// }
-var button = document.getElementById('button');
-button.addEventListener('mouseover', function(){
-    
-});
-
+// object of circles
 function Bubbles(x, y, dx, dy, radius) {
     this.x = x;
     this.y = y;
@@ -33,15 +27,16 @@ function Bubbles(x, y, dx, dy, radius) {
     this.dy = dy;
     this.radius = radius;
 
+
+    //draws a circle
     this.draw = function() {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        c.stroke();
-        c.strokeStyle = 'red';
+        
         c.fillStyle = "black";
         c.fill();
     }
-
+    // updates position every time its called
     this.update = function() {
         if (this.x + this.radius  > innerWidth || this.x - this.radius < 0) {
             this.dx = -this.dx;
@@ -53,24 +48,35 @@ function Bubbles(x, y, dx, dy, radius) {
         this.x += this.dx;
         this.y += this.dy;
 
+
+        // interactivity with hovered element
+        if (isHovered == true && this.radius > 2) {
+            this.radius -= 1;
+        } else if ( isHovered == false 
+                    && this.radius < radius
+                    && this.x > radius
+                    && this.x < canvas.width - radius
+                    && this.y > radius
+                    && this.y < canvas.height - radius) {
+            this.radius += 1;
+        }
+
+
+
         this.draw();
     }
     
 }
 
-// var x = Math.random() * innerWidth;
-// var y = Math.random() * innerHeight;
-// var dx = (Math.random() - 0.5) * 8; // velocity
-// var dy = (Math.random() - 0.5) * 8; 
-// var radius = 30;
+// creates 'i' circles with random specs
 var circleArray = [];
-for ( var i = 0; i < 25; i++) {
+for ( var i = 0; i < 40; i++) {
     
-    var radius = 20;
+    var radius = 40;
     var x = canvas.width / 2;
     var y = canvas.height / 2;
-    var dx = (Math.random() - 0.5) * 5; // velocity
-    var dy = (Math.random() - 0.5) * 5; 
+    var dx = (Math.random() - 0.5) * 10; // velocity
+    var dy = (Math.random() - 0.5) * 10; 
     
 
     circleArray.push(new Bubbles(x, y, dx, dy, radius));
@@ -79,7 +85,7 @@ for ( var i = 0; i < 25; i++) {
 
 
 
-
+// canvas function to update circles on frames. 
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth, innerHeight);
